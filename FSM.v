@@ -33,7 +33,8 @@ localparam STOP_CHECK    = 3'b110;
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         current_state <= IDLE;
-    end else begin
+    end 
+    else begin
         current_state <= next_state;
     end
 end
@@ -50,10 +51,15 @@ always @(*) begin
             end
         end
         START_CHECK: begin
-            next_state = DATA_SAMPLING;
+            if(edge_cnt == (prescale - 1)) begin    
+                    next_state = DATA_SAMPLING;
+                end
+                else begin
+                    next_state = START_CHECK; // Stay in IDLE if not ready for start check
+                end
         end
         DATA_SAMPLING: begin
-            if (bit_cnt < 4'h9) begin
+            if ((bit_cnt < 4'h9) && (edge_cnt < (prescale - 1))) begin
                 next_state = DATA_SAMPLING;
             end 
             else begin
@@ -66,10 +72,20 @@ always @(*) begin
             end
         end
         PARITY_CHECK: begin
-           next_state = STOP_CHECK;
+            if(edge_cnt == (prescale - 1)) begin
+                next_state = STOP_CHECK;
+            end
+            else begin
+                next_state = PARITY_CHECK;
+            end
         end
         STOP_CHECK: begin
-            next_state = IDLE;
+            if(edge_cnt == (prescale - 1)) begin
+                next_state = IDLE;
+            end
+            else begin
+                next_state = STOP_CHECK;
+            end
         end
         default: begin
             next_state = IDLE;
