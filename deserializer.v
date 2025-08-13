@@ -2,6 +2,7 @@ module deserializer(
     input clk,
     input rst_n,
     input deser_en,
+    input [5:0] prescale,
     input sampled_bit,
     output [7:0] P_DATA
 );
@@ -28,7 +29,7 @@ always @(posedge clk or negedge rst_n) begin
         clk_count <= 0;
     end
     else if(deser_en) begin
-        if(clk_count < 8) begin
+        if(clk_count < prescale) begin
             clk_count <= clk_count + 1;
         end
         else begin
@@ -38,5 +39,5 @@ always @(posedge clk or negedge rst_n) begin
 end
 
 assign P_DATA = shift_reg;
-assign sampling_clk = (clk_count < 4)?1'b1:1'b0;
+assign sampling_clk = (clk_count < (prescale >> 1))?1'b1:1'b0;
 endmodule
