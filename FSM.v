@@ -59,7 +59,7 @@ always @(*) begin
                 end
         end
         DATA_SAMPLING: begin
-            if ((bit_cnt < 4'h9) && (edge_cnt < (prescale - 1))) begin
+            if ((bit_cnt < 4'h9) && (edge_cnt < prescale)) begin
                 next_state = DATA_SAMPLING;
             end 
             else begin
@@ -120,7 +120,12 @@ always @(*) begin
         START_CHECK: begin
             enable = 1'b1;
             par_chk_en = 1'b0;
-            strt_chk_en = 1'b1;
+            if(edge_cnt == (prescale >> 1) + 1) begin
+                strt_chk_en = 1'b1; // Enable start check when sampling is done
+            end else begin
+                strt_chk_en = 1'b0; // Keep start check disabled until sampling is complete
+            end
+            
             stp_chk_en = 1'b0;
             dat_samp_en = 1'b1;
             deser_en = 1'b0;
@@ -141,7 +146,7 @@ always @(*) begin
         end
         PARITY_CHECK: begin
             enable = 1'b1;
-            if(edge_cnt == (prescale >> 1)) begin
+            if(edge_cnt == (prescale >> 1) + 1) begin
                 par_chk_en = 1'b1; // Enable parity check when sampling is done
             end else begin
                 par_chk_en = 1'b0; // Keep parity check disabled until sampling is complete
@@ -156,7 +161,11 @@ always @(*) begin
             enable = 1'b1;
             par_chk_en = 1'b0;
             strt_chk_en = 1'b0;
-            stp_chk_en = 1'b1;
+            if(edge_cnt == (prescale >> 1) + 1) begin
+                stp_chk_en = 1'b1; // Enable stop check when sampling is done
+            end else begin
+                stp_chk_en = 1'b0; // Keep stop check disabled until sampling is complete
+            end
             dat_samp_en = 1'b1;
             deser_en = 1'b0;
             if(!stp_err && !strt_glitch && !par_err) begin

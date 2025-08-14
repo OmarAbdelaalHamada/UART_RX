@@ -11,18 +11,17 @@ module parity_check(
 //internals :
 reg parity_bit;
 always @(posedge clk or negedge rst_n) begin
+    parity_bit <= sampled_bit;
     if(!rst_n) begin
         parity_bit <= 0;
+        par_err <= 0;
     end
     else if(par_chk_en) begin
-        parity_bit <= sampled_bit;
-    end
-    else begin
         if(PAR_TYP == 1'b1) begin // Odd parity check
-            par_err <= (parity_bit == ~^data_in);
+            par_err <= (parity_bit == ^data_in);
         end 
         else begin // Even parity check
-            par_err <= (parity_bit == ^data_in);
+            par_err <= (parity_bit == ~^data_in);
         end
     end
 end

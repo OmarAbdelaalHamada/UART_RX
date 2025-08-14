@@ -6,3 +6,4 @@ parity_check.v
 start_check.v
 stop_check.v
 UART_RX.v
+UART_RX_TB.v

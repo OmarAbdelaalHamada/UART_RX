@@ -10,11 +10,14 @@ always @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         stp_err <= 0;
     end
-    else if(sampled_bit == 1'b0) begin
-        stp_err <= 1'b1;
+    else if(stp_chk_en) begin
+        if(sampled_bit == 1'b0) begin
+            stp_err <= 1'b1;
+        end
+        else begin
+            stp_err <= 1'b0;
+        end
     end
-    else begin
-        stp_err <= 1'b0;
-    end
+    
 end
 endmodule
