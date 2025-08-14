@@ -22,3 +22,6 @@ rad.json
 TestResults.xml
 .history
 work
+UART_RX.mpf
+vsim.wlf
+UART_RX.cr.mti
