@@ -146,7 +146,7 @@ always @(*) begin
         end
         PARITY_CHECK: begin
             enable = 1'b1;
-            if(edge_cnt == (prescale >> 1) + 1) begin
+            if(edge_cnt == (prescale >> 1) + 2) begin
                 par_chk_en = 1'b1; // Enable parity check when sampling is done
             end else begin
                 par_chk_en = 1'b0; // Keep parity check disabled until sampling is complete

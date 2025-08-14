@@ -36,13 +36,15 @@ module UART_RX_TB();
     initial begin
         init();
         reset();
-        feed_input(1,1,8);
-        feed_input(1,0,8);
-
+        feed_input(0,1,8);
+        feed_input(0,0,8);
         feed_input(1,1,8);
         feed_input(1,0,8);
         feed_input(0,1,8);
-        feed_input(0,1,8);
+        feed_input(1,1,8);
+        feed_input(1,0,8);
+        
+        
         
         $finish;
     end
@@ -69,17 +71,20 @@ module UART_RX_TB();
     endtask
     //feeding input tasks:
     task feed_input;
-        input PAR_EN;
-        input PAR_TYP;
-        input [5:0] prescale;
+        input PAR_EN_task;
+        input PAR_TYP_task;
+        input [5:0] prescale_task;
         integer i;
         reg [7:0] data;
         begin
             data = 8'b00001001; // Example data pattern
+            PAR_EN = PAR_EN_task;
+            PAR_TYP = PAR_TYP_task;
+            prescale = prescale_task;
             RX_IN = 0;// start bit
             #(CLK_PERIOD*prescale);
 
-            for (i = 7; i >= 0; i = i - 1) begin
+            for (i = 0; i < 8; i = i + 1) begin
                 RX_IN = data[i];
                 #(CLK_PERIOD*prescale);
             end

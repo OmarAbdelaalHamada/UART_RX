@@ -27,6 +27,7 @@ module UART_RX(
         .clk(clk),
         .rst_n(rst_n),
         .enable(enable),
+        .PAR_EN(PAR_EN),
         .prescale(prescale),
         .edge_cnt(edge_cnt),
         .bit_cnt(bit_cnt)
