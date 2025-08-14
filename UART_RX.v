@@ -14,8 +14,6 @@ module UATT_RX(
     // Internal wires:
     wire [3:0] bit_cnt;
     wire [5:0] edge_cnt;
-    wire par_err;
-    wire stp_err;
     wire strt_glitch;
     wire enable;
     wire par_chk_en;
