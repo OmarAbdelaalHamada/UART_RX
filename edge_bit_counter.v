@@ -17,15 +17,15 @@ always @(posedge clk or negedge rst_n) begin
         edge_cnt <= edge_cnt + 1; // Increment edge count on each clock cycle
         if(edge_cnt == prescale - 1) begin
             if(PAR_EN) begin
-                if(bit_cnt <  4'hb) begin
+                if(bit_cnt <  4'ha) begin
                     bit_cnt <= bit_cnt + 1; // Increment bit count when edge count reaches prescale
                 end
                 else begin
                     bit_cnt <= 4'b0;
                 end
-            end
+            end 
             else begin
-                if(bit_cnt <  4'ha) begin
+                if(bit_cnt <  4'h9) begin
                     bit_cnt <= bit_cnt + 1; // Increment bit count when edge count reaches prescale
                 end
                 else begin
