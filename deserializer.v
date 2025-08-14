@@ -2,7 +2,6 @@ module deserializer(
     input clk,
     input rst_n,
     input deser_en,
-    input [5:0] prescale,
     input sampled_bit,
     output [7:0] P_DATA
 );
