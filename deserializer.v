@@ -9,9 +9,7 @@ module deserializer(
 //Internals:
 integer i = 0;
 reg [7:0] shift_reg;
-reg [5:0] clk_count;
-wire sampling_clk;
-always @(posedge sampling_clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         shift_reg <= 0;
     end
@@ -23,21 +21,6 @@ always @(posedge sampling_clk or negedge rst_n) begin
     end
 end
 
-//counter
-always @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
-        clk_count <= 0;
-    end
-    else if(deser_en) begin
-        if(clk_count < prescale) begin
-            clk_count <= clk_count + 1;
-        end
-        else begin
-            clk_count <= 0;
-        end
-    end
-end
-
 assign P_DATA = shift_reg;
-assign sampling_clk = (clk_count < (prescale >> 1))?1'b1:1'b0;
+
 endmodule

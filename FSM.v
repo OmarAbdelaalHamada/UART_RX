@@ -81,7 +81,12 @@ always @(*) begin
         end
         STOP_CHECK: begin
             if(edge_cnt == (prescale - 1)) begin
-                next_state = IDLE;
+                if(RX_IN) begin
+                    next_state = IDLE;
+                end
+                else begin
+                    next_state = START_CHECK; // GO TO START_CHECK if RX_IN is low
+                end
             end
             else begin
                 next_state = STOP_CHECK;
@@ -123,16 +128,24 @@ always @(*) begin
         end
         DATA_SAMPLING: begin
             enable = 1'b1;
-            par_chk_en = 1'b0;
+            par_chk_en = 1'b0; // Keep parity check disabled until sampling is complete
             strt_chk_en = 1'b0;
             stp_chk_en = 1'b0;
             dat_samp_en = 1'b1;
-            deser_en = 1'b1;
+            if(edge_cnt == ((prescale >> 1) + 1)) begin
+                deser_en = 1'b1; // Enable deserializer when sampling is done
+            end else begin
+                deser_en = 1'b0; // Keep deserializer disabled until sampling is complete
+            end
             data_valid = 1'b0;
         end
         PARITY_CHECK: begin
             enable = 1'b1;
-            par_chk_en = 1'b1;
+            if(edge_cnt == (prescale >> 1)) begin
+                par_chk_en = 1'b1; // Enable parity check when sampling is done
+            end else begin
+                par_chk_en = 1'b0; // Keep parity check disabled until sampling is complete
+            end
             strt_chk_en = 1'b0;
             stp_chk_en = 1'b0;
             dat_samp_en = 1'b1;

@@ -29,4 +29,4 @@ always @(posedge clk or negedge rst_n) begin
 end 
 
 assign sampled_bit = ((buffered_samples == 3'h3) | (buffered_samples == 3'h5) | (buffered_samples == 3'h6) | (buffered_samples == 3'h7));   
-endmodule
+endmodule 
