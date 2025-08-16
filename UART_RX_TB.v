@@ -52,7 +52,7 @@ module UART_RX_TB();
     task reset;
         begin
             rst_n = 0;
-            #(CLK_PERIOD*prescale);
+            #(CLK_PERIOD);
             rst_n = 1;
         end
     endtask
