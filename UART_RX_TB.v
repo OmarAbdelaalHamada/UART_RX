@@ -129,13 +129,9 @@ module UART_RX_TB();
     //CLK GENERATION:
 
     always begin
-        if(prescale == 6'h8)
-            #(TX_CLK_PERIOD/(2*8)) clk = ~clk;
-        else if(prescale == 6'h10)
-            #(TX_CLK_PERIOD/(2*16)) clk = ~clk;
-        else if(prescale == 6'h20)
-            #(TX_CLK_PERIOD/(2*32)) clk = ~clk;
+        #(TX_CLK_PERIOD/(2*prescale)) clk = ~clk;
     end
+
     task strt_glitch_check;
         begin
             #(TX_CLK_PERIOD/prescale);
