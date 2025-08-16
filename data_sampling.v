@@ -20,10 +20,10 @@ always @(posedge clk or negedge rst_n) begin
             buffered_samples[0] <= RX_in; // Sample the data input on the fourth edge
         end
         else if (edge_cnt == (prescale >> 1)) begin
-            buffered_samples[1] <= RX_in; // Sample the data input on the fourth edge
+            buffered_samples[1] <= RX_in; // Sample the data input on the fifth edge
         end
         else if (edge_cnt == ((prescale >> 1)+1)) begin
-            buffered_samples[2] <= RX_in; // Sample the data input on the fourth edge
+            buffered_samples[2] <= RX_in; // Sample the data input on the sixth edge
         end
     end
 end 
