@@ -51,12 +51,17 @@ always @(*) begin
             end
         end
         START_CHECK: begin
-            if(edge_cnt == (prescale - 1)) begin    
+            if(strt_glitch) begin
+                next_state = IDLE;
+            end
+            else begin
+                if(edge_cnt == (prescale - 1)) begin    
                     next_state = DATA_SAMPLING;
                 end
                 else begin
                     next_state = START_CHECK; // Stay in IDLE if not ready for start check
                 end
+            end
         end
         DATA_SAMPLING: begin
             if ((bit_cnt < 4'h9) && (edge_cnt < prescale)) begin

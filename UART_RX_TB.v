@@ -35,26 +35,31 @@ module UART_RX_TB();
     initial begin
         init();
         reset();
-
+        //prescale 8
         repeat(10) begin
             #(CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 8);
         end
-        
+        //prescale 16
         repeat(10) begin
             #(CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 16);
         end
+        //prescale 32
         repeat(10) begin
             #(CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 32);
         end
+
+        // Glitch test
+            strt_glitch_check();
+
 
         $finish;
     end
@@ -126,4 +131,18 @@ module UART_RX_TB();
         else if(prescale == 6'h20)
             #(CLK_PERIOD/(2*32)) clk = ~clk;
     end
+    task strt_glitch_check;
+        begin
+            #(CLK_PERIOD/prescale);
+            RX_IN = 0;
+            #(CLK_PERIOD/prescale);
+            RX_IN = 1;
+            #(CLK_PERIOD);
+            if(DUT.u_fsm.current_state == DUT.u_fsm.IDLE) begin
+                $display("Start glitch test passed.");
+            end else begin
+                $display("Start glitch test failed.");
+            end
+        end
+    endtask
 endmodule
