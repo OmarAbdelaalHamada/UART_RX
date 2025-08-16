@@ -1,3 +1,4 @@
+`timescale 100ns/100ps
 module UART_RX_TB();
     reg clk;
     reg rst_n;
@@ -10,13 +11,11 @@ module UART_RX_TB();
     wire par_err;
     wire stp_err;
     wire data_valid;
-    parameter CLK_PERIOD = 10;
+    parameter CLK_PERIOD = 10*8.680555555556/8;
 
     //CLK GENERATION:
-    initial begin
-        forever #(CLK_PERIOD / 2) clk = ~clk;
-    end
-
+    
+    always #(CLK_PERIOD/2) clk = ~clk;
     //DUT instantiation:
     UART_RX DUT (
         .clk(clk),
@@ -36,15 +35,14 @@ module UART_RX_TB();
     initial begin
         init();
         reset();
+
         feed_input(0,1,8);
         feed_input(0,0,8);
         feed_input(1,1,8);
         feed_input(1,0,8);
         feed_input(0,1,8);
         feed_input(1,1,8);
-        feed_input(1,0,8);
-        
-        
+        feed_input(1,0,8);  
         
         $finish;
     end
