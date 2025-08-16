@@ -11,7 +11,7 @@ module UART_RX_TB();
     wire par_err;
     wire stp_err;
     wire data_valid;
-    parameter CLK_PERIOD = 10*8.680555555556;
+    parameter TX_CLK_PERIOD = 10*8.680555555556;
     //internal signals
     reg par_en;
     reg par_typ;
@@ -37,28 +37,32 @@ module UART_RX_TB();
         reset();
         //prescale 8
         repeat(10) begin
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 8);
         end
+        // Glitch test
+        strt_glitch_check();
         //prescale 16
         repeat(10) begin
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 16);
         end
+        // Glitch test
+        strt_glitch_check();
         //prescale 32
         repeat(10) begin
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             par_en = $random % 2;
             par_typ = $random % 2;
             feed_input(par_en, par_typ, 32);
         end
 
         // Glitch test
-            strt_glitch_check();
+        strt_glitch_check();
 
 
         $finish;
@@ -69,7 +73,7 @@ module UART_RX_TB();
     task reset;
         begin
             rst_n = 0;
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             rst_n = 1;
         end
     endtask
@@ -92,28 +96,29 @@ module UART_RX_TB();
         integer i;
         reg [7:0] data;
         begin
+            #(TX_CLK_PERIOD/prescale);
             data = $random; // Example data pattern
             PAR_EN = PAR_EN_task;
             PAR_TYP = PAR_TYP_task;
             prescale = prescale_task;
             RX_IN = 0;// start bit
-            #(CLK_PERIOD);
+            #(TX_CLK_PERIOD);
 
             for (i = 0; i < 8; i = i + 1) begin
                 RX_IN = data[i];
-                #(CLK_PERIOD);
+                #(TX_CLK_PERIOD);
             end
             if(PAR_EN) begin
                 if(PAR_TYP) begin
                     RX_IN = ~^data; // Odd parity bit
-                    #(CLK_PERIOD);
+                    #(TX_CLK_PERIOD);
                 end else begin
                     RX_IN = ^data; // Even parity bit
-                    #(CLK_PERIOD);
+                    #(TX_CLK_PERIOD);
                 end
             end
             RX_IN = 1; // Stop bit
-            #(CLK_PERIOD);
+            #(TX_CLK_PERIOD);
             if(data == P_DATA && par_err == 0 && stp_err == 0) begin
                 $display("input test passed.");
             end else begin
@@ -125,19 +130,19 @@ module UART_RX_TB();
 
     always begin
         if(prescale == 6'h8)
-            #(CLK_PERIOD/(2*8)) clk = ~clk;
+            #(TX_CLK_PERIOD/(2*8)) clk = ~clk;
         else if(prescale == 6'h10)
-            #(CLK_PERIOD/(2*16)) clk = ~clk;
+            #(TX_CLK_PERIOD/(2*16)) clk = ~clk;
         else if(prescale == 6'h20)
-            #(CLK_PERIOD/(2*32)) clk = ~clk;
+            #(TX_CLK_PERIOD/(2*32)) clk = ~clk;
     end
     task strt_glitch_check;
         begin
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             RX_IN = 0;
-            #(CLK_PERIOD/prescale);
+            #(TX_CLK_PERIOD/prescale);
             RX_IN = 1;
-            #(CLK_PERIOD);
+            #(TX_CLK_PERIOD);
             if(DUT.u_fsm.current_state == DUT.u_fsm.IDLE) begin
                 $display("Start glitch test passed.");
             end else begin
