@@ -68,6 +68,13 @@ module UART_RX_TB();
         $finish;
     end
 
+
+     initial begin
+        $dumpfile("UART_RX.vcd");
+        $dumpvars;
+    end
+
+
     //Tasks:
     //reset task:
     task reset;
